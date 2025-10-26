@@ -9,7 +9,7 @@ from .team_supervisor import TeamSupervisor
 from .models import AgentState, RouteDecision
 from .agents import BaseAgent, SupervisorAgent
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 __all__ = [
     "AgentSystem",
     "TeamSupervisor",
