@@ -1,29 +1,25 @@
 """Writing agent for content creation and formatting."""
-from langchain.agents import AgentExecutor, create_openai_functions_agent
-from langchain.tools import Tool
+from langchain.agents import create_agent
 from langchain_core.language_models import BaseChatModel
-from langchain import hub
 from tools import writing_tool
 
 
-def create_writing_agent(llm: BaseChatModel) -> AgentExecutor:
+def create_writing_agent(llm: BaseChatModel):
     """Create a writing agent for content creation.
     
     Args:
         llm: The language model to use for the agent
         
     Returns:
-        AgentExecutor configured with writing tools
+        Compiled agent graph configured with writing tools
     """
-    tools = [
-        Tool(
-            name="Write",
-            func=writing_tool,
-            description="Write and format content professionally. Use this for content creation tasks."
-        )
-    ]
+    tools = [writing_tool]
     
-    prompt = hub.pull("hwchase17/openai-functions-agent")
-    agent = create_openai_functions_agent(llm, tools, prompt)
+    system_prompt = """You are a writing agent specializing in content creation and formatting.
+    Use the writing tool to create and format professional content."""
     
-    return AgentExecutor(agent=agent, tools=tools, verbose=True)
+    return create_agent(
+        llm,
+        tools=tools,
+        system_prompt=system_prompt
+    )

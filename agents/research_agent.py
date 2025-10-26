@@ -1,29 +1,25 @@
 """Research agent for information gathering."""
-from langchain.agents import AgentExecutor, create_openai_functions_agent
-from langchain.tools import Tool
+from langchain.agents import create_agent
 from langchain_core.language_models import BaseChatModel
-from langchain import hub
 from tools import research_tool
 
 
-def create_research_agent(llm: BaseChatModel) -> AgentExecutor:
+def create_research_agent(llm: BaseChatModel):
     """Create a research agent for information gathering.
     
     Args:
         llm: The language model to use for the agent
         
     Returns:
-        AgentExecutor configured with research tools
+        Compiled agent graph configured with research tools
     """
-    tools = [
-        Tool(
-            name="Research",
-            func=research_tool,
-            description="Research information on any topic. Use this for information gathering tasks."
-        )
-    ]
+    tools = [research_tool]
     
-    prompt = hub.pull("hwchase17/openai-functions-agent")
-    agent = create_openai_functions_agent(llm, tools, prompt)
+    system_prompt = """You are a research agent specializing in information gathering.
+    Use the research tool to find information on any topic requested."""
     
-    return AgentExecutor(agent=agent, tools=tools, verbose=True)
+    return create_agent(
+        llm,
+        tools=tools,
+        system_prompt=system_prompt
+    )

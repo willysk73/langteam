@@ -1,7 +1,6 @@
 import os
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
-from langchain.agents import AgentExecutor
 from langchain_core.messages import HumanMessage
 from langgraph.graph import StateGraph, END
 
@@ -25,7 +24,7 @@ class MultiAgentSystem:
         if not os.getenv("OPENAI_API_KEY"):
             raise ValueError("OPENAI_API_KEY not found in environment variables")
         
-        self.llm = ChatOpenAI(model="gpt-4", temperature=0)
+        self.llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
         
         # Define available agents with metadata
         self.available_agents = [
@@ -55,33 +54,37 @@ class MultiAgentSystem:
         self.analysis_agent = create_analysis_agent(self.llm)
         self.writing_agent = create_writing_agent(self.llm)
         self.math_agent = create_math_agent(self.llm)
-        
+
         # Build the workflow graph
         self.workflow = self._build_workflow()
-    
+
     def _supervisor_node(self, state: AgentState) -> AgentState:
         """Supervisor node that delegates to the Supervisor class."""
         return self.supervisor.decide_next_agent(state)
-    
-    def _agent_node(self, agent: AgentExecutor, agent_name: str):
+
+    def _agent_node(self, agent, agent_name: str):
         """Create a node for a specific agent."""
         def node(state: AgentState) -> AgentState:
             messages = state["messages"]
             last_message = messages[-1].content if messages else ""
             
             print(f"\n🤖 {agent_name} is working...")
-            result = agent.invoke({"input": last_message})
+            # The new create_agent returns a compiled graph, which is invoked directly
+            result = agent.invoke({"messages": [("human", last_message)]})
             
+            # Extract the agent's response from the result
+            agent_response = result['messages'][-1].content
+
             # Add agent's response to messages
             new_message = HumanMessage(
-                content=f"{agent_name} result: {result['output']}",
+                content=f"{agent_name} result: {agent_response}",
                 name=agent_name
             )
             
             return {
                 "messages": messages + [new_message],
                 "next": "",
-                "task_result": {**state.get("task_result", {}), agent_name: result['output']}
+                "task_result": {**state.get("task_result", {}), agent_name: agent_response}
             }
         
         return node

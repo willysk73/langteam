@@ -1,29 +1,25 @@
 """Math agent for calculations and computations."""
-from langchain.agents import AgentExecutor, create_openai_functions_agent
-from langchain.tools import Tool
+from langchain.agents import create_agent
 from langchain_core.language_models import BaseChatModel
-from langchain import hub
 from tools import calculation_tool
 
 
-def create_math_agent(llm: BaseChatModel) -> AgentExecutor:
+def create_math_agent(llm: BaseChatModel):
     """Create a math agent for calculations.
     
     Args:
         llm: The language model to use for the agent
         
     Returns:
-        AgentExecutor configured with calculation tools
+        Compiled agent graph configured with calculation tools
     """
-    tools = [
-        Tool(
-            name="Calculate",
-            func=calculation_tool,
-            description="Perform mathematical calculations. Use this for numerical tasks."
-        )
-    ]
+    tools = [calculation_tool]
     
-    prompt = hub.pull("hwchase17/openai-functions-agent")
-    agent = create_openai_functions_agent(llm, tools, prompt)
+    system_prompt = """You are a math agent specializing in calculations and computations.
+    Use the calculation tool to perform mathematical operations."""
     
-    return AgentExecutor(agent=agent, tools=tools, verbose=True)
+    return create_agent(
+        llm,
+        tools=tools,
+        system_prompt=system_prompt
+    )
