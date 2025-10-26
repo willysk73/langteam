@@ -1,5 +1,5 @@
 """Supervisor agent for coordinating sub-agents."""
-from typing import List, Callable
+from typing import List, Callable, Optional
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import HumanMessage
 from .base_agent import BaseAgent
@@ -8,7 +8,7 @@ from .base_agent import BaseAgent
 class SupervisorAgent(BaseAgent):
     """Supervisor agent that routes tasks to specialized sub-agents."""
 
-    def __init__(self, llm: BaseChatModel, available_agents: list[BaseAgent], name: str = None):
+    def __init__(self, llm: BaseChatModel, available_agents: list[BaseAgent], name: Optional[str] = None):
         """Initialize the supervisor agent.
         
         Args:

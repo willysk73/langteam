@@ -1,7 +1,7 @@
 
 """Base class for creating specialized agents."""
 from abc import ABC, abstractmethod
-from typing import List, Callable
+from typing import List, Callable, Optional
 from langchain.agents import create_agent
 from langchain_core.language_models import BaseChatModel
 
@@ -15,7 +15,7 @@ class BaseAgent(ABC):
         """Return a description of the agent."""
         pass
 
-    def __init__(self, llm: BaseChatModel, name: str = None):
+    def __init__(self, llm: BaseChatModel, name: Optional[str] = None):
         """Initialize the agent with a language model and optional name.
         
         Args:
