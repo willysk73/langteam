@@ -15,9 +15,15 @@ class BaseAgent(ABC):
         """Return a description of the agent."""
         pass
 
-    def __init__(self, llm: BaseChatModel):
-        """Initialize the agent with a language model."""
+    def __init__(self, llm: BaseChatModel, name: str = None):
+        """Initialize the agent with a language model and optional name.
+        
+        Args:
+            llm: The language model to use
+            name: Optional custom name for the agent. If not provided, uses class name.
+        """
         self.llm = llm
+        self.name = name or self.__class__.__name__
         self.agent = self._create_agent()
 
     @property

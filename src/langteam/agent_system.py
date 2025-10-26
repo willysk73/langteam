@@ -55,10 +55,14 @@ class AgentSystem:
         workflow.add_node("supervisor", self._supervisor_node)
         
         # Add agent nodes and edges
+        # Create a mapping of agent names to node names for routing
+        self.agent_name_map = {}
         for agent in self.agents:
-            agent_name = agent.__class__.__name__.replace('Agent', '').lower() + '_agent'
-            workflow.add_node(agent_name, self._agent_node(agent, agent.__class__.__name__))
-            workflow.add_edge(agent_name, "supervisor")
+            # Use agent.name for node identification
+            node_name = agent.name.replace('Agent', '').lower() + '_agent'
+            self.agent_name_map[agent.name] = node_name
+            workflow.add_node(node_name, self._agent_node(agent, agent.name))
+            workflow.add_edge(node_name, "supervisor")
         
         # Set entry point
         workflow.set_entry_point("supervisor")
@@ -68,9 +72,10 @@ class AgentSystem:
             next_agent = state["next"]
             if next_agent == "finish":
                 return "end"
-            return next_agent
+            # Map agent name to node name
+            return self.agent_name_map.get(next_agent, next_agent)
         
-        conditional_map = {agent.__class__.__name__.replace('Agent', '').lower() + '_agent': agent.__class__.__name__.replace('Agent', '').lower() + '_agent' for agent in self.agents}
+        conditional_map = {node_name: node_name for node_name in self.agent_name_map.values()}
         conditional_map["end"] = END
         
         workflow.add_conditional_edges(

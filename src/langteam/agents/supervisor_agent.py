@@ -1,21 +1,30 @@
 """Supervisor agent for coordinating sub-agents."""
 from typing import List, Callable
 from langchain_core.language_models import BaseChatModel
+from langchain_core.messages import HumanMessage
 from .base_agent import BaseAgent
 
 
 class SupervisorAgent(BaseAgent):
     """Supervisor agent that routes tasks to specialized sub-agents."""
 
-    def __init__(self, llm: BaseChatModel, available_agents: list[BaseAgent]):
-        """Initialize the supervisor agent."""
+    def __init__(self, llm: BaseChatModel, available_agents: list[BaseAgent], name: str = None):
+        """Initialize the supervisor agent.
+        
+        Args:
+            llm: The language model to use
+            available_agents: List of agents this supervisor manages
+            name: Optional custom name for the supervisor
+        """
         self.available_agents = available_agents
-        super().__init__(llm)
+        super().__init__(llm, name=name)
 
     @property
     def description(self) -> str:
         """Return a description of the agent."""
-        return "Acts as a supervisor to coordinate a team of specialized agents."
+        # Describe capabilities based on sub-agents
+        capabilities = [agent.description for agent in self.available_agents]
+        return f"Coordinates a team that can: {', '.join(capabilities)}"
 
     @property
     def tools(self) -> List[Callable]:
@@ -43,3 +52,38 @@ Follow these rules:
 5.  **No Assumptions**: Do not make assumptions about what has been done. Base your decisions only on the conversation history. If the history is empty, start from the beginning of the task.
 
 Your job is to decide which agent should act next. Choose FINISH ONLY when the entire task is complete."""
+    
+    def invoke(self, inputs, **kwargs):
+        """Override invoke to run the sub-agent system."""
+        # Import here to avoid circular dependency
+        from ..agent_system import AgentSystem
+        
+        # Create a sub-system for this supervisor's agents
+        sub_system = AgentSystem(self.llm, self.available_agents)
+        
+        # Extract the task from inputs
+        if isinstance(inputs, dict) and "messages" in inputs:
+            messages = inputs["messages"]
+            if messages:
+                # Get the last message content as the task
+                if isinstance(messages[-1], tuple):
+                    task = messages[-1][1]
+                else:
+                    task = messages[-1].content if hasattr(messages[-1], 'content') else str(messages[-1])
+            else:
+                task = "No task provided"
+        else:
+            task = str(inputs)
+        
+        # Run the sub-system
+        result = sub_system.run(task)
+        
+        # Format result for return
+        # Summarize the task results from all sub-agents
+        summary = f"Completed task using team {self.name}:\n"
+        for agent_name, agent_result in result.get("task_result", {}).items():
+            summary += f"- {agent_name}: {agent_result}\n"
+        
+        return {
+            "messages": [HumanMessage(content=summary)]
+        }

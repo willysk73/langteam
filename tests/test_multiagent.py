@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../examples')))
 
-from langteam import AgentSystem
+from langteam import AgentSystem, SupervisorAgent
 from langchain_openai import ChatOpenAI
 from example_agents import (
     ResearchAgent,
@@ -86,6 +86,42 @@ def test_multi_step_math_and_analysis():
     # Check for the result of the calculation
     math_agent_output = result["task_result"]["MathAgent"]
     assert "1210" in math_agent_output
+
+@requires_openai
+def test_hierarchical_supervisors():
+    """Test hierarchical supervisor structure with supervisor agents under a top supervisor."""
+    llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+    
+    # Create two teams of specialized agents
+    # Team 1: Research and Analysis
+    research_team = [
+        ResearchAgent(llm),
+        AnalysisAgent(llm),
+    ]
+    research_supervisor = SupervisorAgent(llm, research_team, name="ResearchTeamSupervisor")
+    
+    # Team 2: Math and Writing
+    content_team = [
+        MathAgent(llm),
+        WritingAgent(llm),
+    ]
+    content_supervisor = SupervisorAgent(llm, content_team, name="ContentTeamSupervisor")
+    
+    # Top-level supervisor coordinates the two sub-supervisors
+    top_level_agents = [research_supervisor, content_supervisor]
+    system = AgentSystem(llm, top_level_agents)
+    
+    # Task that requires coordination between teams
+    test_task = "Research the concept of compound interest, calculate 1000 * (1.05)^3, and write a summary explaining the result"
+    result = system.run(test_task)
+    
+    assert result is not None
+    assert "task_result" in result
+    # Check that both supervisors were involved
+    assert "ResearchTeamSupervisor" in result["task_result"]
+    assert "ContentTeamSupervisor" in result["task_result"]
+    # The task should complete successfully
+    assert result["next"] == "finish" or len(result["task_result"]) > 0
 
 if __name__ == "__main__":
     # This allows running the tests directly from the script

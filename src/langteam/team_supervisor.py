@@ -34,15 +34,29 @@ class TeamSupervisor:
         """
         messages = state["messages"]
         
-        # Build agent descriptions dynamically
+        # Build agent descriptions dynamically with agent names
         agent_descriptions = "\n".join(
-            f"- {agent.__class__.__name__}: {agent.description}" 
+            f"- {agent.name}: {agent.description}" 
             for agent in self.available_agents
         )
         
         # Create supervisor prompt with structured output
+        system_prompt = f"""You are a supervisor orchestrating a team of specialized agents. Your role is to analyze the user's task and the ongoing conversation to delegate the next step to the most appropriate agent.
+
+Here are the agents available to you:
+{agent_descriptions}
+
+Follow these rules:
+1.  **Analyze the Request**: Carefully read the user's task and the conversation history.
+2.  **Break Down the Task**: If the task is complex, break it down into smaller, sequential steps. Each step should be handled by the most appropriate agent.
+3.  **Delegate**: Choose the best agent to perform the next action using their exact name from the list above.
+4.  **FINISH**: Once all steps of the task are fully completed and the user's request has been met, you must respond with "finish". Do not finish if there are still steps to be done.
+5.  **No Assumptions**: Do not make assumptions about what has been done. Base your decisions only on the conversation history. If the history is empty, start from the beginning of the task.
+
+Your job is to decide which agent should act next by returning their exact name, or "finish" when the entire task is complete."""
+        
         supervisor_prompt = ChatPromptTemplate.from_messages([
-            ("system", self.supervisor_agent.system_prompt),
+            ("system", system_prompt),
             ("human", """Task: {task}
 
 Conversation history:
