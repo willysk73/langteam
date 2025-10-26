@@ -1,25 +1,19 @@
 """Analysis agent for data analysis and insights."""
-from langchain.agents import create_agent
-from langchain_core.language_models import BaseChatModel
+from typing import List, Callable
+from .base_agent import BaseAgent
 from tools import analysis_tool
 
 
-def create_analysis_agent(llm: BaseChatModel):
-    """Create an analysis agent for data analysis.
-    
-    Args:
-        llm: The language model to use for the agent
-        
-    Returns:
-        Compiled agent graph configured with analysis tools
-    """
-    tools = [analysis_tool]
-    
-    system_prompt = """You are an analysis agent specializing in data analysis and insights.
-    Use the analysis tool to analyze data and identify patterns."""
-    
-    return create_agent(
-        llm,
-        tools=tools,
-        system_prompt=system_prompt
-    )
+class AnalysisAgent(BaseAgent):
+    """Agent specializing in data analysis."""
+
+    @property
+    def tools(self) -> List[Callable]:
+        """Return a list of tools for the agent."""
+        return [analysis_tool]
+
+    @property
+    def system_prompt(self) -> str:
+        """Return the system prompt for the agent."""
+        return """You are an analysis agent specializing in data analysis and insights.
+        Use the analysis tool to analyze data and identify patterns."""

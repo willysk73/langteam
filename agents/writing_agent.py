@@ -1,25 +1,19 @@
 """Writing agent for content creation and formatting."""
-from langchain.agents import create_agent
-from langchain_core.language_models import BaseChatModel
+from typing import List, Callable
+from .base_agent import BaseAgent
 from tools import writing_tool
 
 
-def create_writing_agent(llm: BaseChatModel):
-    """Create a writing agent for content creation.
-    
-    Args:
-        llm: The language model to use for the agent
-        
-    Returns:
-        Compiled agent graph configured with writing tools
-    """
-    tools = [writing_tool]
-    
-    system_prompt = """You are a writing agent specializing in content creation and formatting.
-    Use the writing tool to create and format professional content."""
-    
-    return create_agent(
-        llm,
-        tools=tools,
-        system_prompt=system_prompt
-    )
+class WritingAgent(BaseAgent):
+    """Agent specializing in content creation."""
+
+    @property
+    def tools(self) -> List[Callable]:
+        """Return a list of tools for the agent."""
+        return [writing_tool]
+
+    @property
+    def system_prompt(self) -> str:
+        """Return the system prompt for the agent."""
+        return """You are a writing agent specializing in content creation and formatting.
+        Use the writing tool to create and format professional content."""

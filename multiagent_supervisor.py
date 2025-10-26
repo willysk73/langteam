@@ -7,10 +7,10 @@ from langgraph.graph import StateGraph, END
 from models import AgentInfo, AgentState
 from supervisor import Supervisor
 from agents import (
-    create_research_agent,
-    create_analysis_agent,
-    create_writing_agent,
-    create_math_agent,
+    ResearchAgent,
+    AnalysisAgent,
+    WritingAgent,
+    MathAgent,
 )
 
 # Load environment variables
@@ -50,10 +50,10 @@ class MultiAgentSystem:
         self.supervisor = Supervisor(self.llm, self.available_agents)
         
         # Create sub-agents
-        self.research_agent = create_research_agent(self.llm)
-        self.analysis_agent = create_analysis_agent(self.llm)
-        self.writing_agent = create_writing_agent(self.llm)
-        self.math_agent = create_math_agent(self.llm)
+        self.research_agent = ResearchAgent(self.llm)
+        self.analysis_agent = AnalysisAgent(self.llm)
+        self.writing_agent = WritingAgent(self.llm)
+        self.math_agent = MathAgent(self.llm)
 
         # Build the workflow graph
         self.workflow = self._build_workflow()
