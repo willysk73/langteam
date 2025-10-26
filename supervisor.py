@@ -1,5 +1,5 @@
 """Supervisor agent for coordinating sub-agents."""
-from langchain_openai import ChatOpenAI
+from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import HumanMessage
 from langchain_core.prompts import ChatPromptTemplate
 from models import AgentInfo, AgentState, RouteDecision
@@ -8,7 +8,7 @@ from models import AgentInfo, AgentState, RouteDecision
 class Supervisor:
     """Supervisor agent that routes tasks to specialized sub-agents."""
     
-    def __init__(self, llm: ChatOpenAI, available_agents: list[AgentInfo]):
+    def __init__(self, llm: BaseChatModel, available_agents: list[AgentInfo]):
         """Initialize the supervisor.
         
         Args:

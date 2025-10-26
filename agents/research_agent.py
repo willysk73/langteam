@@ -1,12 +1,12 @@
 """Research agent for information gathering."""
 from langchain.agents import AgentExecutor, create_openai_functions_agent
 from langchain.tools import Tool
-from langchain_openai import ChatOpenAI
+from langchain_core.language_models import BaseChatModel
 from langchain import hub
 from tools import research_tool
 
 
-def create_research_agent(llm: ChatOpenAI) -> AgentExecutor:
+def create_research_agent(llm: BaseChatModel) -> AgentExecutor:
     """Create a research agent for information gathering.
     
     Args:

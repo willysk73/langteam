@@ -1,12 +1,12 @@
 """Math agent for calculations and computations."""
 from langchain.agents import AgentExecutor, create_openai_functions_agent
 from langchain.tools import Tool
-from langchain_openai import ChatOpenAI
+from langchain_core.language_models import BaseChatModel
 from langchain import hub
 from tools import calculation_tool
 
 
-def create_math_agent(llm: ChatOpenAI) -> AgentExecutor:
+def create_math_agent(llm: BaseChatModel) -> AgentExecutor:
     """Create a math agent for calculations.
     
     Args:

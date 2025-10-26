@@ -1,12 +1,12 @@
 """Analysis agent for data analysis and insights."""
 from langchain.agents import AgentExecutor, create_openai_functions_agent
 from langchain.tools import Tool
-from langchain_openai import ChatOpenAI
+from langchain_core.language_models import BaseChatModel
 from langchain import hub
 from tools import analysis_tool
 
 
-def create_analysis_agent(llm: ChatOpenAI) -> AgentExecutor:
+def create_analysis_agent(llm: BaseChatModel) -> AgentExecutor:
     """Create an analysis agent for data analysis.
     
     Args:

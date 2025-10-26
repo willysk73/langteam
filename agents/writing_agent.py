@@ -1,12 +1,12 @@
 """Writing agent for content creation and formatting."""
 from langchain.agents import AgentExecutor, create_openai_functions_agent
 from langchain.tools import Tool
-from langchain_openai import ChatOpenAI
+from langchain_core.language_models import BaseChatModel
 from langchain import hub
 from tools import writing_tool
 
 
-def create_writing_agent(llm: ChatOpenAI) -> AgentExecutor:
+def create_writing_agent(llm: BaseChatModel) -> AgentExecutor:
     """Create a writing agent for content creation.
     
     Args:
