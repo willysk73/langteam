@@ -1,11 +1,7 @@
 import os
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
-from langchain_core.messages import HumanMessage
-from langgraph.graph import StateGraph, END
-
-from models import AgentState
-from team_supervisor import TeamSupervisor
+from agent_system import AgentSystem
 from agents import (
     ResearchAgent,
     AnalysisAgent,
@@ -17,134 +13,24 @@ from agents import (
 load_dotenv()
 
 
-class MultiAgentSystem:
-    """Multiagent system with supervisor coordination."""
-    
-    def __init__(self):
-        if not os.getenv("OPENAI_API_KEY"):
-            raise ValueError("OPENAI_API_KEY not found in environment variables")
-        
-        self.llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
-        
-        # Create sub-agents
-        self.research_agent = ResearchAgent(self.llm)
-        self.analysis_agent = AnalysisAgent(self.llm)
-        self.writing_agent = WritingAgent(self.llm)
-        self.math_agent = MathAgent(self.llm)
-
-        # Define available agents with metadata
-        self.available_agents = [
-            self.research_agent,
-            self.analysis_agent,
-            self.writing_agent,
-            self.math_agent,
-        ]
-
-        # Initialize supervisor
-        self.supervisor = TeamSupervisor(self.llm, self.available_agents)
-
-        # Build the workflow graph
-        self.workflow = self._build_workflow()
-
-    def _supervisor_node(self, state: AgentState) -> AgentState:
-        """Supervisor node that delegates to the Supervisor class."""
-        return self.supervisor.decide_next_agent(state)
-
-    def _agent_node(self, agent, agent_name: str):
-        """Create a node for a specific agent."""
-        def node(state: AgentState) -> AgentState:
-            messages = state["messages"]
-            last_message = messages[-1].content if messages else ""
-            
-            print(f"\n🤖 {agent_name} is working...")
-            # The new create_agent returns a compiled graph, which is invoked directly
-            result = agent.invoke({"messages": [("human", last_message)]})
-            
-            # Extract the agent's response from the result
-            agent_response = result['messages'][-1].content
-
-            # Add agent's response to messages
-            new_message = HumanMessage(
-                content=f"{agent_name} result: {agent_response}",
-                name=agent_name
-            )
-            
-            return {
-                "messages": messages + [new_message],
-                "next": "",
-                "task_result": {**state.get("task_result", {}), agent_name: agent_response}
-            }
-        
-        return node
-    
-    def _build_workflow(self) -> StateGraph:
-        """Build the workflow graph with supervisor and agents."""
-        workflow = StateGraph(AgentState)
-        
-        # Add nodes
-        workflow.add_node("supervisor", self._supervisor_node)
-        workflow.add_node("research_agent", self._agent_node(self.research_agent, "Research Agent"))
-        workflow.add_node("analysis_agent", self._agent_node(self.analysis_agent, "Analysis Agent"))
-        workflow.add_node("writing_agent", self._agent_node(self.writing_agent, "Writing Agent"))
-        workflow.add_node("math_agent", self._agent_node(self.math_agent, "Math Agent"))
-        
-        # Set entry point
-        workflow.set_entry_point("supervisor")
-        
-        # Add conditional edges from supervisor to agents
-        def route_supervisor(state: AgentState) -> str:
-            next_agent = state["next"]
-            if next_agent == "finish":
-                return "end"
-            return next_agent
-        
-        workflow.add_conditional_edges(
-            "supervisor",
-            route_supervisor,
-            {
-                "research_agent": "research_agent",
-                "analysis_agent": "analysis_agent",
-                "writing_agent": "writing_agent",
-                "math_agent": "math_agent",
-                "end": END
-            }
-        )
-        
-        # All agents return to supervisor for next decision
-        workflow.add_edge("research_agent", "supervisor")
-        workflow.add_edge("analysis_agent", "supervisor")
-        workflow.add_edge("writing_agent", "supervisor")
-        workflow.add_edge("math_agent", "supervisor")
-        
-        return workflow.compile()
-    
-    def run(self, task: str) -> dict:
-        """Run the multiagent system with a given task."""
-        print(f"\n{'='*60}")
-        print(f"🚀 Starting multiagent system")
-        print(f"📝 Task: {task}")
-        print(f"{'='*60}")
-        
-        initial_state = {
-            "messages": [HumanMessage(content=task)],
-            "next": "",
-            "task_result": {}
-        }
-        
-        result = self.workflow.invoke(initial_state)
-        
-        print(f"\n{'='*60}")
-        print(f"✅ Task completed!")
-        print(f"{'='*60}")
-        
-        return result
-
-
 def main():
     """Main function demonstrating the multiagent system."""
     
-    # Initialize the multiagent system
-    system = MultiAgentSystem()
+    if not os.getenv("OPENAI_API_KEY"):
+        raise ValueError("OPENAI_API_KEY not found in environment variables")
+
+    llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+
+    # Create agent instances
+    agents = [
+        ResearchAgent(llm),
+        AnalysisAgent(llm),
+        WritingAgent(llm),
+        MathAgent(llm),
+    ]
+
+    # Initialize the agent system
+    system = AgentSystem(llm, agents)
     
     # Example tasks demonstrating agent collaboration
     tasks = [

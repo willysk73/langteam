@@ -63,7 +63,7 @@ Decide which agent should act next or if we should FINISH.""")
             )
         )
         
-        next_agent = decision.next_agent.lower()
+        next_agent = decision.next_agent
         
         print(f"\n🎯 Supervisor decision: {next_agent}")
         print(f"💭 Reasoning: {decision.reasoning}")
