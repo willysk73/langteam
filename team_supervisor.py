@@ -1,11 +1,13 @@
+
 """Supervisor agent for coordinating sub-agents."""
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import HumanMessage
 from langchain_core.prompts import ChatPromptTemplate
 from models import AgentInfo, AgentState, RouteDecision
+from agents.supervisor_agent import SupervisorAgent
 
 
-class Supervisor:
+class TeamSupervisor:
     """Supervisor agent that routes tasks to specialized sub-agents."""
     
     def __init__(self, llm: BaseChatModel, available_agents: list[AgentInfo]):
@@ -17,6 +19,7 @@ class Supervisor:
         """
         self.llm = llm
         self.available_agents = available_agents
+        self.supervisor_agent = SupervisorAgent(llm, available_agents)
         self.structured_llm = llm.with_structured_output(RouteDecision)
     
     def decide_next_agent(self, state: AgentState) -> AgentState:
@@ -38,18 +41,7 @@ class Supervisor:
         
         # Create supervisor prompt with structured output
         supervisor_prompt = ChatPromptTemplate.from_messages([
-            ("system", f"""You are a supervisor coordinating a team of specialized agents.
-
-Available agents:
-{agent_descriptions}
-
-Your job is to analyze the current task and conversation history, then decide which agent 
-should handle the next step. Choose FINISH when the task is complete.
-
-Consider:
-- What has already been done by previous agents
-- What remains to be done
-- Which agent is best suited for the next step"""),
+            ("system", self.supervisor_agent.system_prompt),
             ("human", """Task: {task}
 
 Conversation history:

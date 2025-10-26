@@ -5,7 +5,7 @@ from langchain_core.messages import HumanMessage
 from langgraph.graph import StateGraph, END
 
 from models import AgentInfo, AgentState
-from supervisor import Supervisor
+from team_supervisor import TeamSupervisor
 from agents import (
     ResearchAgent,
     AnalysisAgent,
@@ -47,7 +47,7 @@ class MultiAgentSystem:
         ]
         
         # Initialize supervisor
-        self.supervisor = Supervisor(self.llm, self.available_agents)
+        self.supervisor = TeamSupervisor(self.llm, self.available_agents)
         
         # Create sub-agents
         self.research_agent = ResearchAgent(self.llm)
