@@ -6,10 +6,11 @@ from dotenv import load_dotenv
 
 # Add project root to Python path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../examples')))
 
-from agent_system import AgentSystem
+from langteam import AgentSystem
 from langchain_openai import ChatOpenAI
-from agents import (
+from example_agents import (
     ResearchAgent,
     AnalysisAgent,
     WritingAgent,

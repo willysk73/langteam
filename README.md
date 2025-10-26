@@ -1,18 +1,64 @@
-# LangChain Agents Project
+# LangTeam
 
-A project demonstrating LangChain agents, including a multiagent system with supervisor coordination.
+A multiagent system framework built on LangChain and LangGraph with supervisor-based coordination.
 
-## Setup
+LangTeam provides a flexible architecture for creating teams of specialized AI agents that collaborate on complex tasks under the guidance of a supervisor agent.
 
-1. Install dependencies:
+## Features
+
+- **Supervisor Architecture**: Intelligent task routing and coordination
+- **Extensible Agent System**: Easy-to-extend base classes for custom agents
+- **LangGraph Integration**: Stateful workflows with LangGraph
+- **Type-Safe**: Full type hints and Pydantic models
+
+## Installation
+
 ```bash
 pip install -e .
 ```
 
-2. Create a `.env` file with your OpenAI API key:
+For development:
+```bash
+pip install -e ".[dev]"
+```
+
+## Quick Start
+
+1. Set up your environment:
 ```bash
 cp .env.example .env
-# Edit .env and add your OpenAI API key
+# Edit .env and add your OPENAI_API_KEY
+```
+
+2. Create your custom agents by extending `BaseAgent`:
+```python
+from langteam import BaseAgent
+from typing import List, Callable
+
+class MyAgent(BaseAgent):
+    @property
+    def description(self) -> str:
+        return "Description of what this agent does"
+    
+    @property
+    def tools(self) -> List[Callable]:
+        return [my_tool_function]
+    
+    @property
+    def system_prompt(self) -> str:
+        return "System prompt for the agent"
+```
+
+3. Set up the agent system:
+```python
+from langteam import AgentSystem
+from langchain_openai import ChatOpenAI
+
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+agents = [MyAgent(llm), AnotherAgent(llm)]
+system = AgentSystem(llm, agents)
+
+result = system.run("Your task here")
 ```
 
 ## Usage

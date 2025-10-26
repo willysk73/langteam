@@ -2,8 +2,8 @@
 """Agent system for managing and coordinating a team of specialized agents."""
 from langchain_core.messages import HumanMessage
 from langgraph.graph import StateGraph, END
-from models import AgentState
-from team_supervisor import TeamSupervisor
+from .models import AgentState
+from .team_supervisor import TeamSupervisor
 
 
 class AgentSystem:
