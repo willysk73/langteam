@@ -3,14 +3,15 @@
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import HumanMessage
 from langchain_core.prompts import ChatPromptTemplate
-from models import AgentInfo, AgentState, RouteDecision
+from models import AgentState, RouteDecision
+from agents.base_agent import BaseAgent
 from agents.supervisor_agent import SupervisorAgent
 
 
 class TeamSupervisor:
     """Supervisor agent that routes tasks to specialized sub-agents."""
     
-    def __init__(self, llm: BaseChatModel, available_agents: list[AgentInfo]):
+    def __init__(self, llm: BaseChatModel, available_agents: list[BaseAgent]):
         """Initialize the supervisor.
         
         Args:
@@ -35,7 +36,7 @@ class TeamSupervisor:
         
         # Build agent descriptions dynamically
         agent_descriptions = "\n".join(
-            f"- {agent.name}: {agent.description}" 
+            f"- {agent.__class__.__name__}: {agent.description}" 
             for agent in self.available_agents
         )
         

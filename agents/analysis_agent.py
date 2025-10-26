@@ -1,4 +1,4 @@
-"""Analysis agent for data analysis and insights."""
+
 from typing import List, Callable
 from .base_agent import BaseAgent
 from tools import analysis_tool
@@ -7,6 +7,10 @@ from tools import analysis_tool
 class AnalysisAgent(BaseAgent):
     """Agent specializing in data analysis."""
 
+    @property
+    def description(self) -> str:
+        """Return a description of the agent."""
+        return "Analyzes data, identifies patterns, and provides insights. Use for analytical tasks."
     @property
     def tools(self) -> List[Callable]:
         """Return a list of tools for the agent."""

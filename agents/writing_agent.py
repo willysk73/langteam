@@ -1,4 +1,4 @@
-"""Writing agent for content creation and formatting."""
+
 from typing import List, Callable
 from .base_agent import BaseAgent
 from tools import writing_tool
@@ -7,6 +7,10 @@ from tools import writing_tool
 class WritingAgent(BaseAgent):
     """Agent specializing in content creation."""
 
+    @property
+    def description(self) -> str:
+        """Return a description of the agent."""
+        return "Writes, formats, and structures content professionally. Use for content creation tasks."
     @property
     def tools(self) -> List[Callable]:
         """Return a list of tools for the agent."""

@@ -4,7 +4,7 @@ from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage
 from langgraph.graph import StateGraph, END
 
-from models import AgentInfo, AgentState
+from models import AgentState
 from team_supervisor import TeamSupervisor
 from agents import (
     ResearchAgent,
@@ -26,34 +26,22 @@ class MultiAgentSystem:
         
         self.llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
         
-        # Define available agents with metadata
-        self.available_agents = [
-            AgentInfo(
-                name="research_agent",
-                description="Researches information and gathers data on any topic. Use for information gathering tasks."
-            ),
-            AgentInfo(
-                name="analysis_agent",
-                description="Analyzes data, identifies patterns, and provides insights. Use for analytical tasks."
-            ),
-            AgentInfo(
-                name="writing_agent",
-                description="Writes, formats, and structures content professionally. Use for content creation tasks."
-            ),
-            AgentInfo(
-                name="math_agent",
-                description="Performs mathematical calculations and computations. Use for numerical tasks."
-            ),
-        ]
-        
-        # Initialize supervisor
-        self.supervisor = TeamSupervisor(self.llm, self.available_agents)
-        
         # Create sub-agents
         self.research_agent = ResearchAgent(self.llm)
         self.analysis_agent = AnalysisAgent(self.llm)
         self.writing_agent = WritingAgent(self.llm)
         self.math_agent = MathAgent(self.llm)
+
+        # Define available agents with metadata
+        self.available_agents = [
+            self.research_agent,
+            self.analysis_agent,
+            self.writing_agent,
+            self.math_agent,
+        ]
+
+        # Initialize supervisor
+        self.supervisor = TeamSupervisor(self.llm, self.available_agents)
 
         # Build the workflow graph
         self.workflow = self._build_workflow()

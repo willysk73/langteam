@@ -1,4 +1,4 @@
-"""Research agent for information gathering."""
+
 from typing import List, Callable
 from .base_agent import BaseAgent
 from tools import research_tool
@@ -7,6 +7,10 @@ from tools import research_tool
 class ResearchAgent(BaseAgent):
     """Agent specializing in information gathering."""
 
+    @property
+    def description(self) -> str:
+        """Return a description of the agent."""
+        return "Researches information and gathers data on any topic. Use for information gathering tasks."
     @property
     def tools(self) -> List[Callable]:
         """Return a list of tools for the agent."""

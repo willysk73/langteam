@@ -1,17 +1,21 @@
 """Supervisor agent for coordinating sub-agents."""
 from typing import List, Callable
 from langchain_core.language_models import BaseChatModel
-from models import AgentInfo
 from .base_agent import BaseAgent
 
 
 class SupervisorAgent(BaseAgent):
     """Supervisor agent that routes tasks to specialized sub-agents."""
 
-    def __init__(self, llm: BaseChatModel, available_agents: list[AgentInfo]):
+    def __init__(self, llm: BaseChatModel, available_agents: list[BaseAgent]):
         """Initialize the supervisor agent."""
         self.available_agents = available_agents
         super().__init__(llm)
+
+    @property
+    def description(self) -> str:
+        """Return a description of the agent."""
+        return ""
 
     @property
     def tools(self) -> List[Callable]:
@@ -22,7 +26,7 @@ class SupervisorAgent(BaseAgent):
     def system_prompt(self) -> str:
         """Return the system prompt for the agent."""
         agent_descriptions = "\n".join(
-            f"- {agent.name}: {agent.description}" 
+            f"- {agent.__class__.__name__}: {agent.description}" 
             for agent in self.available_agents
         )
         

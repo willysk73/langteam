@@ -4,10 +4,6 @@ from pydantic import BaseModel, Field
 from langchain_core.messages import BaseMessage
 
 
-class AgentInfo(BaseModel):
-    """Information about an available agent."""
-    name: str = Field(description="The agent's identifier name")
-    description: str = Field(description="What this agent specializes in")
 
 
 class RouteDecision(BaseModel):
