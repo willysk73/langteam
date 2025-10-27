@@ -6,12 +6,12 @@
 
 A multiagent system framework built on LangChain and LangGraph with supervisor-based coordination.
 
-LangGroup provides a flexible architecture for creating teams of specialized AI agents that collaborate on complex tasks under the guidance of a supervisor agent.
+LangGroup provides a flexible architecture for creating groups of specialized AI agents that collaborate on complex tasks under the guidance of a supervisor agent.
 
 ## Features
 
 - **Supervisor Architecture**: Intelligent task routing and coordination
-- **Hierarchical Supervisors**: Supervisors can manage other supervisors, enabling nested team structures
+- **Hierarchical Supervisors**: Supervisors can manage other supervisors, enabling nested group structures
 - **Extensible Agent System**: Easy-to-extend base classes for custom agents
 - **LangGraph Integration**: Stateful workflows with LangGraph
 - **Type-Safe**: Full type hints and Pydantic models
@@ -68,9 +68,9 @@ result = system.run("Your task here")
 
 ## Hierarchical Supervisors
 
-**💡 Key Feature**: `SupervisorAgent` can be used as a regular agent within another `AgentSystem`, enabling powerful hierarchical team structures.
+**💡 Key Feature**: `SupervisorAgent` can be used as a regular agent within another `AgentSystem`, enabling powerful hierarchical group structures.
 
-Create teams of teams for complex workflows:
+Create groups of agents for complex workflows:
 
 ```python
 from langgroup import AgentSystem, SupervisorAgent
@@ -78,29 +78,29 @@ from langchain_openai import ChatOpenAI
 
 llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
-# Create specialized teams
-research_team = [ResearchAgent(llm), AnalysisAgent(llm)]
+# Create specialized groups
+research_group = [ResearchAgent(llm), AnalysisAgent(llm)]
 research_supervisor = SupervisorAgent(
-    llm, research_team, 
-    name="ResearchTeamSupervisor"
+    llm, research_group, 
+    name="ResearchGroupSupervisor"
 )
 
-content_team = [WritingAgent(llm), EditingAgent(llm)]
+content_group = [WritingAgent(llm), EditingAgent(llm)]
 content_supervisor = SupervisorAgent(
-    llm, content_team, 
-    name="ContentTeamSupervisor"
+    llm, content_group, 
+    name="ContentGroupSupervisor"
 )
 
-# Top-level supervisor coordinates the teams
+# Top-level supervisor coordinates the groups
 top_system = AgentSystem(llm, [research_supervisor, content_supervisor])
 result = top_system.run("Research AI trends and write a comprehensive report")
 ```
 
 **How it works:**
 1. The top-level supervisor receives the task
-2. It intelligently routes to the appropriate team supervisor (e.g., ResearchTeamSupervisor)
-3. The team supervisor manages its specialized agents
-4. Results flow back up to coordinate between teams
+2. It intelligently routes to the appropriate group supervisor (e.g., ResearchGroupSupervisor)
+3. The group supervisor manages its specialized agents
+4. Results flow back up to coordinate between groups
 5. Complex multi-stage tasks are handled seamlessly
 
 This architecture allows you to build sophisticated agent organizations with clear separation of concerns.
