@@ -1,7 +1,7 @@
 """Example agent implementations demonstrating how to use the langteam framework."""
 
 from typing import List, Callable
-from langteam.agents import BaseAgent
+from langgroup.agents import BaseAgent
 
 
 def research_tool(query: str) -> str:

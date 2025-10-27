@@ -1,12 +1,12 @@
-# LangTeam
+# LangGroup
 
-[![PyPI version](https://badge.fury.io/py/langteam.svg)](https://badge.fury.io/py/langteam)
+[![PyPI version](https://badge.fury.io/py/langgroup.svg)](https://badge.fury.io/py/langgroup)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A multiagent system framework built on LangChain and LangGraph with supervisor-based coordination.
 
-LangTeam provides a flexible architecture for creating teams of specialized AI agents that collaborate on complex tasks under the guidance of a supervisor agent.
+LangGroup provides a flexible architecture for creating teams of specialized AI agents that collaborate on complex tasks under the guidance of a supervisor agent.
 
 ## Features
 
@@ -19,7 +19,7 @@ LangTeam provides a flexible architecture for creating teams of specialized AI a
 ## Installation
 
 ```bash
-pip install langteam
+pip install langgroup
 ```
 
 For development:
@@ -37,7 +37,7 @@ cp .env.example .env
 
 2. Create your custom agents by extending `BaseAgent`:
 ```python
-from langteam import BaseAgent
+from langgroup import BaseAgent
 from typing import List, Callable
 
 class MyAgent(BaseAgent):
@@ -56,7 +56,7 @@ class MyAgent(BaseAgent):
 
 3. Set up the agent system:
 ```python
-from langteam import AgentSystem
+from langgroup import AgentSystem
 from langchain_openai import ChatOpenAI
 
 llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
@@ -73,7 +73,7 @@ result = system.run("Your task here")
 Create teams of teams for complex workflows:
 
 ```python
-from langteam import AgentSystem, SupervisorAgent
+from langgroup import AgentSystem, SupervisorAgent
 from langchain_openai import ChatOpenAI
 
 llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)

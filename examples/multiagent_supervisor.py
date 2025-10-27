@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
-from langteam import AgentSystem
+from langgroup import AgentSystem
 from example_agents import (
     ResearchAgent,
     AnalysisAgent,

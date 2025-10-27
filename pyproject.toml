@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "langteam"
+name = "langgroup"
 version = "0.2.0"
 description = "A multiagent system framework built on LangChain and LangGraph with supervisor-based coordination"
 readme = "README.md"
@@ -38,16 +38,16 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/willysk73/langteam"
-Documentation = "https://github.com/willysk73/langteam#readme"
-Repository = "https://github.com/willysk73/langteam"
-"Bug Tracker" = "https://github.com/willysk73/langteam/issues"
+Homepage = "https://github.com/willysk73/langgroup"
+Documentation = "https://github.com/willysk73/langgroup#readme"
+Repository = "https://github.com/willysk73/langgroup"
+"Bug Tracker" = "https://github.com/willysk73/langgroup/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools.package-data]
-langteam = ["py.typed"]
+langgroup = ["py.typed"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

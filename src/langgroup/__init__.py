@@ -1,4 +1,4 @@
-"""LangTeam - A multiagent system framework built on LangChain and LangGraph.
+"""LangGroup - A multiagent system framework built on LangChain and LangGraph.
 
 This package provides a supervisor-based architecture for coordinating
 multiple specialized AI agents to work together on complex tasks.

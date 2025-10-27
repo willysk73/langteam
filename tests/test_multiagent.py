@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../examples')))
 
-from langteam import AgentSystem, SupervisorAgent
+from langgroup import AgentSystem, SupervisorAgent
 from langchain_openai import ChatOpenAI
 from example_agents import (
     ResearchAgent,
