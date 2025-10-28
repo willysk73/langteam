@@ -1,6 +1,5 @@
 """Example agent implementations demonstrating how to use the langteam framework."""
 
-from typing import List, Callable
 from langgroup.agents import BaseAgent
 
 
@@ -35,17 +34,15 @@ class ResearchAgent(BaseAgent):
     def description(self) -> str:
         """Return a description of the agent."""
         return "Researches information and gathers data on any topic. Use for information gathering tasks."
-    
-    @property
-    def tools(self) -> List[Callable]:
-        """Return a list of tools for the agent."""
-        return [research_tool]
 
-    @property
-    def system_prompt(self) -> str:
-        """Return the system prompt for the agent."""
-        return """You are a research agent specializing in information gathering.
-        Use the research tool to find information on any topic requested."""
+    def __init__(self, llm, **kwargs):
+        super().__init__(
+            llm,
+            tools=[research_tool],
+            system_prompt="""You are a research agent specializing in information gathering.
+        Use the research tool to find information on any topic requested.""",
+            **kwargs,
+        )
 
 
 class AnalysisAgent(BaseAgent):
@@ -55,17 +52,15 @@ class AnalysisAgent(BaseAgent):
     def description(self) -> str:
         """Return a description of the agent."""
         return "Analyzes data and identifies patterns and insights. Use for data analysis tasks."
-    
-    @property
-    def tools(self) -> List[Callable]:
-        """Return a list of tools for the agent."""
-        return [analysis_tool]
 
-    @property
-    def system_prompt(self) -> str:
-        """Return the system prompt for the agent."""
-        return """You are an analysis agent specializing in data analysis.
-        Use the analysis tool to examine data and provide insights."""
+    def __init__(self, llm, **kwargs):
+        super().__init__(
+            llm,
+            tools=[analysis_tool],
+            system_prompt="""You are an analysis agent specializing in data analysis.
+        Use the analysis tool to examine data and provide insights.""",
+            **kwargs,
+        )
 
 
 class WritingAgent(BaseAgent):
@@ -75,17 +70,15 @@ class WritingAgent(BaseAgent):
     def description(self) -> str:
         """Return a description of the agent."""
         return "Writes and formats content professionally. Use for writing and documentation tasks."
-    
-    @property
-    def tools(self) -> List[Callable]:
-        """Return a list of tools for the agent."""
-        return [writing_tool]
 
-    @property
-    def system_prompt(self) -> str:
-        """Return the system prompt for the agent."""
-        return """You are a writing agent specializing in content creation.
-        Use the writing tool to format and present information clearly."""
+    def __init__(self, llm, **kwargs):
+        super().__init__(
+            llm,
+            tools=[writing_tool],
+            system_prompt="""You are a writing agent specializing in content creation.
+        Use the writing tool to format and present information clearly.""",
+            **kwargs,
+        )
 
 
 class MathAgent(BaseAgent):
@@ -95,14 +88,12 @@ class MathAgent(BaseAgent):
     def description(self) -> str:
         """Return a description of the agent."""
         return "Performs mathematical calculations and computations. Use for math and calculation tasks."
-    
-    @property
-    def tools(self) -> List[Callable]:
-        """Return a list of tools for the agent."""
-        return [calculation_tool]
 
-    @property
-    def system_prompt(self) -> str:
-        """Return the system prompt for the agent."""
-        return """You are a math agent specializing in calculations.
-        Use the calculation tool to solve mathematical problems."""
+    def __init__(self, llm, **kwargs):
+        super().__init__(
+            llm,
+            tools=[calculation_tool],
+            system_prompt="""You are a math agent specializing in calculations.
+        Use the calculation tool to solve mathematical problems.""",
+            **kwargs,
+        )

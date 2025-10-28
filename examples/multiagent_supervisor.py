@@ -15,7 +15,7 @@ load_dotenv()
 
 def main():
     """Main function demonstrating the multiagent system."""
-    
+
     if not os.getenv("OPENAI_API_KEY"):
         raise ValueError("OPENAI_API_KEY not found in environment variables")
 
@@ -31,20 +31,20 @@ def main():
 
     # Initialize the agent system
     system = AgentSystem(llm, agents)
-    
+
     # Example tasks demonstrating agent collaboration
     tasks = [
         "Research artificial intelligence trends and calculate the growth rate if AI adoption increased by 25% per year for 3 years starting at 40%",
         "Analyze the benefits of multiagent systems and write a summary",
     ]
-    
+
     for i, task in enumerate(tasks, 1):
-        print(f"\n\n{'#'*60}")
+        print(f"\n\n{'#' * 60}")
         print(f"TASK {i}")
-        print(f"{'#'*60}")
+        print(f"{'#' * 60}")
         result = system.run(task)
-        
-        print(f"\n📊 Final Results:")
+
+        print("\n📊 Final Results:")
         for agent_name, output in result.get("task_result", {}).items():
             print(f"\n{agent_name}:")
             print(f"  {output}")
