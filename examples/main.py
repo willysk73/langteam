@@ -60,7 +60,7 @@ def main():
     result1 = agent_executor.invoke({"input": "What's 25 * 4 + 10?"})
     print(f"\nAnswer: {result1['output']}")
 
-    print("\n" + "=" * 50)
+    print("\n" + "="*50)
     print("\nQuery 2: What's the weather in San Francisco?")
     result2 = agent_executor.invoke({"input": "What's the weather in San Francisco?"})
     print(f"\nAnswer: {result2['output']}")
