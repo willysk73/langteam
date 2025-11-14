@@ -54,6 +54,8 @@ testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
+log_level = "INFO"
+log_cli = true
 
 [tool.ruff]
 line-length = 100

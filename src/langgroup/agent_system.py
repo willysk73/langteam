@@ -1,10 +1,12 @@
-
 """Agent system for managing and coordinating a team of specialized agents."""
+import logging
+
 from langchain_core.messages import HumanMessage
 from langgraph.graph import StateGraph, END
 from .models import AgentState
 from .team_supervisor import TeamSupervisor
 
+logger = logging.getLogger(__name__)
 
 class AgentSystem:
     """Multiagent system with supervisor coordination."""
@@ -26,7 +28,7 @@ class AgentSystem:
             messages = state["messages"]
             last_message = messages[-1].content if messages else ""
             
-            print(f"\n🤖 {agent_name} is working...")
+            logger.info(f"🤖 {agent_name} is working...")
             # The new create_agent returns a compiled graph, which is invoked directly
             result = agent.invoke({"messages": [("human", last_message)]})
             
@@ -88,10 +90,10 @@ class AgentSystem:
     
     def run(self, task: str) -> dict:
         """Run the multiagent system with a given task."""
-        print(f"\n{'='*60}")
-        print(f"🚀 Starting multiagent system")
-        print(f"📝 Task: {task}")
-        print(f"{'='*60}")
+        logger.info(f"\n{'='*60}")
+        logger.info(f"🚀 Starting multiagent system")
+        logger.info(f"📝 Task: {task}")
+        logger.info(f"{'='*60}")
         
         initial_state = {
             "messages": [HumanMessage(content=task)],
@@ -101,8 +103,8 @@ class AgentSystem:
         
         result = self.workflow.invoke(initial_state)
         
-        print(f"\n{'='*60}")
-        print(f"✅ Task completed!")
-        print(f"{'='*60}")
+        logger.info(f"\n{'='*60}")
+        logger.info(f"✅ Task completed!")
+        logger.info(f"{'='*60}")
         
         return result

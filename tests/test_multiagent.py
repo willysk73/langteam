@@ -5,12 +5,12 @@ import pytest
 from dotenv import load_dotenv
 
 # Add project root to Python path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../examples')))
+sys.path.append("examples")
+sys.path.append("src")
 
 from langgroup import AgentSystem, SupervisorAgent
 from langchain_openai import ChatOpenAI
-from example_agents import (
+from examples.example_agents import (
     ResearchAgent,
     AnalysisAgent,
     WritingAgent,

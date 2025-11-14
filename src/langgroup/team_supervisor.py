@@ -1,11 +1,14 @@
-
 """Supervisor agent for coordinating sub-agents."""
+import logging
+
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import HumanMessage
 from langchain_core.prompts import ChatPromptTemplate
 from .models import AgentState, RouteDecision
 from .agents.base_agent import BaseAgent
 from .agents.supervisor_agent import SupervisorAgent
+
+logger = logging.getLogger(__name__)
 
 
 class TeamSupervisor:
@@ -79,8 +82,8 @@ Decide which agent should act next or if we should FINISH.""")
         
         next_agent = decision.next_agent
         
-        print(f"\n🎯 Supervisor decision: {next_agent}")
-        print(f"💭 Reasoning: {decision.reasoning}")
+        logger.info(f"🎯 Supervisor decision: {next_agent}")
+        logger.info(f"💭 Reasoning: {decision.reasoning}")
         
         return {
             "messages": messages, 
