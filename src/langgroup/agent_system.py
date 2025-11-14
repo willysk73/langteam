@@ -90,10 +90,8 @@ class AgentSystem:
     
     def run(self, task: str) -> dict:
         """Run the multiagent system with a given task."""
-        logger.info(f"\n{'='*60}")
         logger.info(f"🚀 Starting multiagent system")
         logger.info(f"📝 Task: {task}")
-        logger.info(f"{'='*60}")
         
         initial_state = {
             "messages": [HumanMessage(content=task)],
@@ -102,9 +100,6 @@ class AgentSystem:
         }
         
         result = self.workflow.invoke(initial_state)
-        
-        logger.info(f"\n{'='*60}")
         logger.info(f"✅ Task completed!")
-        logger.info(f"{'='*60}")
         
         return result
