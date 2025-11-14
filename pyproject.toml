@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "langgroup"
-version = "0.2.0"
+version = "0.2.1"
 description = "A multiagent system framework built on LangChain and LangGraph with supervisor-based coordination"
 readme = "README.md"
 requires-python = ">=3.10"

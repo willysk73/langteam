@@ -2,8 +2,33 @@
 """Base class for creating specialized agents."""
 from abc import ABC, abstractmethod
 from typing import List, Callable, Optional
+import logging
 from langchain.agents import create_agent
 from langchain_core.language_models import BaseChatModel
+from langchain_core.callbacks import BaseCallbackHandler
+from langchain_core.outputs import LLMResult
+from typing import Any, Dict
+
+
+logger = logging.getLogger(__name__)
+
+
+class ToolCallLogger(BaseCallbackHandler):
+    """Callback handler to log tool calls."""
+
+    def __init__(self, agent_name: str):
+        self.agent_name = agent_name
+
+    def on_tool_start(
+        self, serialized: Dict[str, Any], input_str: str, **kwargs: Any
+    ) -> None:
+        """Log when a tool starts execution."""
+        tool_name = serialized.get("name", "Unknown")
+        logger.info(f"[{self.agent_name}] Calling tool: {tool_name}")
+
+    def on_tool_end(self, output: str, **kwargs: Any) -> None:
+        """Log when a tool finishes execution."""
+        logger.debug(f"[{self.agent_name}] Tool completed")
 
 
 class BaseAgent(ABC):
@@ -24,6 +49,7 @@ class BaseAgent(ABC):
         """
         self.llm = llm
         self.name = name or self.__class__.__name__
+        self.tool_logger = ToolCallLogger(self.name)
         self.agent = self._create_agent()
 
     @property
@@ -47,5 +73,11 @@ class BaseAgent(ABC):
         )
 
     def invoke(self, *args, **kwargs):
-        """Invoke the agent graph."""
+        """Invoke the agent graph with tool call logging."""
+        # Add the tool logger to callbacks if not already present
+        if "config" not in kwargs:
+            kwargs["config"] = {}
+        if "callbacks" not in kwargs["config"]:
+            kwargs["config"]["callbacks"] = []
+        kwargs["config"]["callbacks"].append(self.tool_logger)
         return self.agent.invoke(*args, **kwargs)
