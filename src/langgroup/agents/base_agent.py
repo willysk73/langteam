@@ -25,10 +25,14 @@ class ToolCallLogger(BaseCallbackHandler):
         """Log when a tool starts execution."""
         tool_name = serialized.get("name", "Unknown")
         logger.info(f"[{self.agent_name}] Calling tool: {tool_name}")
+        logger.info(f"[{self.agent_name}] Arguments: {input_str}")
 
     def on_tool_end(self, output: str, **kwargs: Any) -> None:
         """Log when a tool finishes execution."""
-        logger.debug(f"[{self.agent_name}] Tool completed")
+        logger.info(f"[{self.agent_name}] Tool completed")
+        # Extract content if output is a ToolMessage object, otherwise use as-is
+        return_value = output.content if hasattr(output, 'content') else output
+        logger.info(f"[{self.agent_name}] Return value: {return_value}")
 
 
 class BaseAgent(ABC):
